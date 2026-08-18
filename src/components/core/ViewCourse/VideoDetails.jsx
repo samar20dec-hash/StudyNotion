@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 
 import "video-react/dist/video-react.css"
-import { useLocation } from "react-router-dom"
 import { BigPlayButton, Player } from "video-react"
 
 import { markLectureAsComplete } from "../../../services/operations/courseDetailsAPI"
@@ -13,7 +12,6 @@ import IconBtn from "../../Common/IconBtn"
 const VideoDetails = () => {
   const { courseId, sectionId, subSectionId } = useParams()
   const navigate = useNavigate()
-  const location = useLocation()
   const playerRef = useRef(null)
   const dispatch = useDispatch()
   const { token } = useSelector((state) => state.auth)
@@ -25,27 +23,34 @@ const VideoDetails = () => {
   const [videoEnded, setVideoEnded] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    ;(async () => {
-      if (!courseSectionData.length) return
-      if (!courseId && !sectionId && !subSectionId) {
-        navigate(`/dashboard/enrolled-courses`)
-      } else {
-        // console.log("courseSectionData", courseSectionData)
-        const filteredData = courseSectionData.filter(
-          (course) => course._id === sectionId
-        )
-        // console.log("filteredData", filteredData)
-        const filteredVideoData = filteredData?.[0]?.subSection.filter(
-          (data) => data._id === subSectionId
-        )
-        // console.log("filteredVideoData", filteredVideoData)
-        setVideoData(filteredVideoData[0])
-        setPreviewSource(courseEntireData.thumbnail)
-        setVideoEnded(false)
-      }
-    })()
-  }, [courseSectionData, courseEntireData, location.pathname])
+useEffect(() => {
+  ;(async () => {
+    if (!courseSectionData.length) return
+
+    if (!courseId && !sectionId && !subSectionId) {
+      navigate(`/dashboard/enrolled-courses`)
+    } else {
+      const filteredData = courseSectionData.filter(
+        (course) => course._id === sectionId
+      )
+
+      const filteredVideoData = filteredData?.[0]?.subSection.filter(
+        (data) => data._id === subSectionId
+      )
+
+      setVideoData(filteredVideoData[0])
+      setPreviewSource(courseEntireData.thumbnail)
+      setVideoEnded(false)
+    }
+  })()
+}, [
+  courseSectionData,
+  courseEntireData,
+  courseId,
+  navigate,
+  sectionId,
+  subSectionId,
+])
 
   // check if the lecture is the first video of the course
   const isFirstVideo = () => {

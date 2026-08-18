@@ -43,7 +43,10 @@ export default function SubSectionModal({
       setValue("lectureDesc", modalData.description)
       setValue("lectureVideo", modalData.videoUrl)
     }
-  }, [])
+  }, [edit,
+  view,
+  modalData,
+  setValue,])
 
   // detect whether form is updated or not
   const isFormUpdated = () => {
